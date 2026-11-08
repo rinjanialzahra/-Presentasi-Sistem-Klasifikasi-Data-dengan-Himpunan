@@ -1,0 +1,161 @@
+
+import csv
+import matplotlib.pyplot as plt
+from matplotlib_venn import venn2
+
+# Membaca dataset CSV
+def baca_dataset(nama_file):
+    semesta = set()
+    A = set()
+    B = set()
+
+    with open(nama_file, "r", encoding="utf-8") as file:
+        reader = csv.DictReader(file)
+
+        for baris in reader:
+            item = baris["item"]
+            semesta.add(item)
+
+            if baris["A"] == "1":
+                A.add(item)
+
+            if baris["B"] == "1":
+                B.add(item)
+
+    return semesta, A, B
+
+
+# Menampilkan anggota himpunan
+def tampilkan_himpunan(S, A, B):
+    print("\nSEMESTA =", S)
+    print("HIMPUNAN A =", A)
+    print("HIMPUNAN B =", B)
+
+
+# Operasi himpunan
+def operasi_himpunan(S, A, B):
+    print("\n=== OPERASI HIMPUNAN ===")
+
+    union = A | B
+    intersection = A & B
+    difference = A - B
+    complement = S - A
+
+    print("Union (A ∪ B) =", union)
+    print("Intersection (A ∩ B) =", intersection)
+    print("Difference (A - B) =", difference)
+    print("Complement (Aᶜ) =", complement)
+
+
+# Prinsip Inklusi-Eksklusi
+def inklusi_eksklusi(A, B):
+    jumlah_A = len(A)
+    jumlah_B = len(B)
+    jumlah_irisan = len(A & B)
+
+    jumlah_union = jumlah_A + jumlah_B - jumlah_irisan
+
+    print("\n=== PRINSIP INKLUSI-EKSKLUSI ===")
+    print("|A| =", jumlah_A)
+    print("|B| =", jumlah_B)
+    print("|A ∩ B| =", jumlah_irisan)
+
+    print("Rumus: |A ∪ B| = |A| + |B| - |A ∩ B|")
+    print("Perhitungan:", jumlah_A, "+",
+          jumlah_B, "-", jumlah_irisan)
+
+    print("Jumlah anggota unik =", jumlah_union)
+
+
+# Diagram Venn otomatis
+def diagram_venn(A, B):
+    plt.figure(figsize=(7, 6))
+
+    venn2(
+        subsets=(
+            len(A - B),
+            len(B - A),
+            len(A & B)
+        ),
+        set_labels=("Himpunan A", "Himpunan B")
+    )
+
+    plt.title("Diagram Venn Sistem Klasifikasi Data")
+    plt.savefig("diagram_venn.png")
+    plt.show()
+
+
+# Menu utama
+def main():
+    print("====================================")
+    print(" SISTEM KLASIFIKASI DATA DENGAN")
+    print("          HIMPUNAN")
+    print("====================================")
+
+    print("1. Dataset Produk")
+    print("2. Dataset Mahasiswa")
+
+    pilihan = input("\nPilih dataset (1/2): ")
+
+    if pilihan == "1":
+        file = "data_produk.csv"
+        print("\nDataset Produk Toko")
+    elif pilihan == "2":
+        file = "data_mahasiswa.csv"
+        print("\nDataset Mahasiswa")
+    else:
+        print("Pilihan tidak tersedia!")
+        return
+
+    S, A, B = baca_dataset(file)
+
+    while True:
+        print("\n========== MENU APLIKASI ==========")
+        print("1. Tampilkan Dataset dan Himpunan")
+        print("2. Union")
+        print("3. Intersection")
+        print("4. Difference")
+        print("5. Complement")
+        print("6. Diagram Venn")
+        print("7. Inklusi-Eksklusi")
+        print("8. Tampilkan Semua Operasi")
+        print("0. Keluar")
+
+        menu = input("\nPilih menu: ")
+
+        if menu == "1":
+            tampilkan_himpunan(S, A, B)
+
+        elif menu == "2":
+            print("A ∪ B =", A | B)
+
+        elif menu == "3":
+            print("A ∩ B =", A & B)
+
+        elif menu == "4":
+            print("A - B =", A - B)
+
+        elif menu == "5":
+            print("Aᶜ =", S - A)
+
+        elif menu == "6":
+            diagram_venn(A, B)
+
+        elif menu == "7":
+            inklusi_eksklusi(A, B)
+
+        elif menu == "8":
+            tampilkan_himpunan(S, A, B)
+            operasi_himpunan(S, A, B)
+            inklusi_eksklusi(A, B)
+
+        elif menu == "0":
+            print("Terima kasih telah menggunakan aplikasi!")
+            break
+
+        else:
+            print("Menu tidak valid!")
+
+
+if __name__ == "__main__":
+    main()
